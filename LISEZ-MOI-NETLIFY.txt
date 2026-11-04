@@ -1,0 +1,52 @@
+BRANCHER UN SERVICE D'IMAGES EXISTANT (SANS LOUER DE SERVEUR GPU)
+==================================================================
+
+Principe : ton site Netlify contient une petite « fonction » (generer.js).
+L'appli lui envoie le prompt, la fonction demande l'image au service fal.ai
+avec TA clé secrète, puis te renvoie l'image. La clé n'est jamais visible
+dans l'appli.
+
+Coût : le service facture à l'image (FLUX schnell : environ 0,003 $ par
+mégapixel selon leur page, à vérifier sur fal.ai/pricing). Tu dépends donc
+d'un service tiers, avec TON compte et TA clé.
+Ces fichiers n'ont pas pu être testés en ligne : copie-moi toute erreur.
+
+CONTENU DU DOSSIER « depot-github »
+    index.html                       ton générateur (avec le choix de photos)
+    netlify.toml                     réglages Netlify
+    netlify/functions/generer.js     la fonction (garde la structure des dossiers)
+
+ÉTAPE 1 : OBTENIR LA CLÉ DU SERVICE
+    1. Crée un compte sur fal.ai, puis va dans le tableau de bord > Keys.
+    2. « Create Key » (portée « API »), copie la clé tout de suite : elle
+       ne s'affiche qu'une fois.
+    3. Ajoute un peu de crédit sur ton compte si le service le demande.
+
+ÉTAPE 2 : METTRE LES FICHIERS SUR GITHUB
+    Envoie TOUT le contenu du dossier dans un dépôt GitHub, en gardant
+    les sous-dossiers (netlify/functions/generer.js). Sur la page « Upload
+    files » de GitHub, glisse le dossier complet pour garder la structure.
+    (Note : Netlify Drop ne publie pas les fonctions ; il faut passer par
+    GitHub, d'où cette étape.)
+
+ÉTAPE 3 : RELIER LE DÉPÔT À NETLIFY
+    1. Netlify > Add new project > Import an existing project > GitHub.
+    2. Choisis ton dépôt. Laisse la commande de build vide, dossier de
+       publication « . » (déjà indiqué dans netlify.toml). Deploy.
+
+ÉTAPE 4 : AJOUTER TES DEUX SECRETS
+    Netlify > Site configuration > Environment variables > Add :
+        FAL_KEY    = la clé copiée à l'étape 1
+        CLE_ACCES  = un mot de passe de ton choix
+    Puis relance un déploiement (Deploys > Trigger deploy).
+
+ÉTAPE 5 : BRANCHER L'APPLI
+    Ouvre ton site, section « Moteur de génération » :
+        Adresse    : https://TON-SITE.netlify.app/.netlify/functions/generer
+        Clé d'accès: le mot de passe CLE_ACCES
+    Écris un prompt, touche Générer.
+
+PHOTOS DE PERSONNES
+    Cette version génère à partir du texte seulement. Les photos choisies
+    dans l'appli sont envoyées mais pas encore utilisées : il faudra ajouter
+    un modèle qui accepte des images (étape suivante).
